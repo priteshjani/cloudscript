@@ -286,7 +286,7 @@ function App() {
           </div>
           <div className="flex items-center gap-2 text-xs text-zinc-500">
             <span>GCP Project:</span>
-            <span className="font-mono text-red-650 font-semibold">pharmacy-intelligence-demo</span>
+            <span className="font-mono text-red-600 font-semibold">pharmacy-intelligence-demo</span>
           </div>
         </header>
 
@@ -297,7 +297,7 @@ function App() {
           {activeTab === 'architecture' && (
             <div className="max-w-6xl mx-auto space-y-8">
               <div>
-                <span className="text-xs font-semibold text-red-650 uppercase tracking-widest">Overview</span>
+                <span className="text-xs font-semibold text-red-600 uppercase tracking-widest">Overview</span>
                 <h2 className="text-3xl font-extrabold text-zinc-950 mt-1">CloudScript Architecture</h2>
                 <p className="text-zinc-650 mt-1">AI-powered prescription processing on Google Cloud — from fax to dispensed in seconds.</p>
               </div>
@@ -371,7 +371,7 @@ function App() {
                     <div>
                       <div className="flex justify-between text-xs mb-1">
                         <span className="text-zinc-800 font-medium">Date of Birth (Exact / Year Proximity)</span>
-                        <span className="text-red-650 font-bold font-mono">35%</span>
+                        <span className="text-red-600 font-bold font-mono">35%</span>
                       </div>
                       <div className="w-full bg-zinc-100 h-2 rounded-full overflow-hidden">
                         <div className="bg-red-500 h-2 rounded-full" style={{ width: '35%' }}></div>
@@ -381,7 +381,7 @@ function App() {
                     <div>
                       <div className="flex justify-between text-xs mb-1">
                         <span className="text-zinc-800 font-medium">Patient Name (pg_trgm + pgvector)</span>
-                        <span className="text-red-650 font-bold font-mono">20%</span>
+                        <span className="text-red-600 font-bold font-mono">20%</span>
                       </div>
                       <div className="w-full bg-zinc-100 h-2 rounded-full overflow-hidden">
                         <div className="bg-red-500 h-2 rounded-full" style={{ width: '20%' }}></div>
@@ -391,7 +391,7 @@ function App() {
                     <div>
                       <div className="flex justify-between text-xs mb-1">
                         <span className="text-zinc-800 font-medium">Insurance ID (Exact String)</span>
-                        <span className="text-red-650 font-bold font-mono">20%</span>
+                        <span className="text-red-600 font-bold font-mono">20%</span>
                       </div>
                       <div className="w-full bg-zinc-100 h-2 rounded-full overflow-hidden">
                         <div className="bg-red-500 h-2 rounded-full" style={{ width: '20%' }}></div>
@@ -401,7 +401,7 @@ function App() {
                     <div>
                       <div className="flex justify-between text-xs mb-1">
                         <span className="text-zinc-800 font-medium">NPI Prior Fill History</span>
-                        <span className="text-red-650 font-bold font-mono">10%</span>
+                        <span className="text-red-600 font-bold font-mono">10%</span>
                       </div>
                       <div className="w-full bg-zinc-100 h-2 rounded-full overflow-hidden">
                         <div className="bg-red-500 h-2 rounded-full" style={{ width: '10%' }}></div>
@@ -411,7 +411,7 @@ function App() {
                     <div>
                       <div className="flex justify-between text-xs mb-1">
                         <span className="text-zinc-800 font-medium">Drug History (TF-IDF Match)</span>
-                        <span className="text-red-650 font-bold font-mono">10%</span>
+                        <span className="text-red-600 font-bold font-mono">10%</span>
                       </div>
                       <div className="w-full bg-zinc-100 h-2 rounded-full overflow-hidden">
                         <div className="bg-red-500 h-2 rounded-full" style={{ width: '10%' }}></div>
@@ -514,7 +514,7 @@ function App() {
               {/* Left Column: Prescription Scan */}
               <div className="space-y-6">
                 <div>
-                  <span className="text-[10px] bg-red-50 text-red-650 px-2 py-0.5 rounded border border-red-200 font-mono uppercase tracking-wider font-semibold">Stage 1 of 3</span>
+                  <span className="text-[10px] bg-red-50 text-red-600 px-2 py-0.5 rounded border border-red-200 font-mono uppercase tracking-wider font-semibold">Stage 1 of 3</span>
                   <h2 className="text-2xl font-bold mt-2 text-zinc-950">Ingest & Extract</h2>
                   <p className="text-sm text-zinc-500 mt-1">Gemini 2.5 Flash reads the prescription image and extracts all fields into Cloud SQL.</p>
                 </div>
@@ -585,7 +585,7 @@ function App() {
                   <button
                     onClick={handleExtract}
                     disabled={isExtracting}
-                    className="w-full max-w-xs py-3 px-6 bg-red-650 hover:bg-red-750 disabled:bg-zinc-200 disabled:text-zinc-400 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer text-white shadow-md"
+                    className="w-full max-w-xs py-3 px-6 bg-red-600 hover:bg-red-700 disabled:bg-zinc-200 disabled:text-zinc-400 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer text-white shadow-md"
                   >
                     {isExtracting ? (
                       <>
@@ -688,7 +688,7 @@ function App() {
               {/* Left Column: Query Fields */}
               <div className="space-y-6">
                 <div>
-                  <span className="text-[10px] bg-red-50 text-red-650 px-2 py-0.5 rounded border border-red-200 font-mono uppercase tracking-wider font-semibold">Stage 2 of 3</span>
+                  <span className="text-[10px] bg-red-50 text-red-600 px-2 py-0.5 rounded border border-red-200 font-mono uppercase tracking-wider font-semibold">Stage 2 of 3</span>
                   <h2 className="text-2xl font-bold mt-2 text-zinc-950">Match & Review</h2>
                   <p className="text-xs text-zinc-500 mt-1">AI agent evaluates database candidates using trgm & vector matching.</p>
                 </div>
@@ -739,7 +739,7 @@ function App() {
                         onClick={() => setSelectedCandidateId(cand.id)}
                         className={`p-5 rounded-xl border transition-all cursor-pointer ${
                           selectedCandidateId === cand.id 
-                            ? 'bg-red-50 border-red-550 shadow-md shadow-red-50/50' 
+                            ? 'bg-red-50 border-red-500 shadow-md shadow-red-50/50' 
                             : 'bg-white border-zinc-200 hover:border-zinc-300 shadow-sm'
                         }`}
                       >
@@ -808,7 +808,7 @@ function App() {
                 {/* Chatbot Header */}
                 <div className="p-4 border-b border-zinc-200 bg-zinc-50/50 flex items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <div className="p-1.5 bg-red-55 text-red-650 rounded-lg">
+                    <div className="p-1.5 bg-red-50 text-red-600 rounded-lg">
                       <Sparkles className="w-4 h-4" />
                     </div>
                     <div>
@@ -875,7 +875,7 @@ function App() {
                   />
                   <button
                     onClick={handleSendChatMessage}
-                    className="p-2 bg-red-650 hover:bg-red-750 text-white rounded-lg transition-colors cursor-pointer"
+                    className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors cursor-pointer"
                   >
                     <Send className="w-4 h-4" />
                   </button>
@@ -886,7 +886,7 @@ function App() {
               <div className="lg:col-span-3 flex justify-end gap-3 pt-4 border-t border-zinc-200">
                 <button
                   onClick={() => setActiveTab('dispense')}
-                  className="py-3 px-6 bg-red-650 hover:bg-red-750 text-white text-sm font-semibold rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                  className="py-3 px-6 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
                 >
                   Proceed to Verify & Dispense
                   <ChevronRight className="w-4 h-4" />
@@ -899,7 +899,7 @@ function App() {
           {activeTab === 'dispense' && selectedPreset && (
             <div className="max-w-3xl mx-auto space-y-6">
               <div>
-                <span className="text-[10px] bg-red-55 text-red-650 px-2 py-0.5 rounded border border-red-200 font-mono uppercase tracking-wider font-semibold">Stage 3 of 3</span>
+                <span className="text-[10px] bg-red-50 text-red-600 px-2 py-0.5 rounded border border-red-200 font-mono uppercase tracking-wider font-semibold">Stage 3 of 3</span>
                 <h2 className="text-2xl font-bold mt-2 text-zinc-950">Verify & Dispense</h2>
                 <p className="text-xs text-zinc-500 mt-1">Final safety checkpoints before recording the dispensed prescription in target database.</p>
               </div>
