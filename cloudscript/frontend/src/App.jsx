@@ -585,7 +585,8 @@ function App() {
                   <button
                     onClick={handleExtract}
                     disabled={isExtracting}
-                    className="w-full max-w-xs py-3 px-6 bg-red-600 hover:bg-red-700 disabled:bg-zinc-200 disabled:text-zinc-400 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer text-white shadow-md"
+                    style={{ backgroundColor: isExtracting ? '#e4e4e7' : '#dc2626' }}
+                    className="w-full max-w-xs py-3 px-6 hover:bg-red-700 disabled:bg-zinc-200 disabled:text-zinc-400 rounded-lg text-sm font-semibold flex items-center justify-center gap-2 transition-colors cursor-pointer text-white shadow-md"
                   >
                     {isExtracting ? (
                       <>
@@ -875,7 +876,8 @@ function App() {
                   />
                   <button
                     onClick={handleSendChatMessage}
-                    className="p-2 bg-red-600 hover:bg-red-700 text-white rounded-lg transition-colors cursor-pointer"
+                    style={{ backgroundColor: '#dc2626' }}
+                    className="p-2 hover:bg-red-700 text-white rounded-lg transition-colors cursor-pointer"
                   >
                     <Send className="w-4 h-4" />
                   </button>
@@ -886,7 +888,8 @@ function App() {
               <div className="lg:col-span-3 flex justify-end gap-3 pt-4 border-t border-zinc-200">
                 <button
                   onClick={() => setActiveTab('dispense')}
-                  className="py-3 px-6 bg-red-600 hover:bg-red-700 text-white text-sm font-semibold rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
+                  style={{ backgroundColor: '#dc2626' }}
+                  className="py-3 px-6 hover:bg-red-700 text-white text-sm font-semibold rounded-lg flex items-center gap-1.5 transition-colors cursor-pointer shadow-sm"
                 >
                   Proceed to Verify & Dispense
                   <ChevronRight className="w-4 h-4" />
@@ -952,7 +955,8 @@ function App() {
               <div className="flex justify-end gap-3 pt-4">
                 <button
                   onClick={handleDispense}
-                  className="w-full py-4 bg-emerald-600 hover:bg-emerald-700 text-white text-base font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg transition-colors cursor-pointer"
+                  style={{ backgroundColor: '#059669' }}
+                  className="w-full py-4 hover:bg-emerald-700 text-white text-base font-bold rounded-xl flex items-center justify-center gap-2 shadow-lg transition-colors cursor-pointer"
                 >
                   <Check className="w-5 h-5" />
                   Approve & Dispense Prescription
