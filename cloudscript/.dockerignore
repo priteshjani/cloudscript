@@ -1,0 +1,6 @@
+frontend/node_modules
+backend/.venv
+.venv
+.git
+.gitignore
+README.md

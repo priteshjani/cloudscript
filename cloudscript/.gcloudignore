@@ -1,0 +1,8 @@
+.gcloudignore
+.git
+.gitignore
+.dockerignore
+frontend/node_modules
+backend/.venv
+.venv
+README.md
