@@ -90,41 +90,89 @@ jetski/
 
 ---
 
-## 🚀 Getting Started
+## 🚀 Deployment & Getting Started
 
 ### Prerequisites
-*   A **Google Cloud Project** with the following APIs enabled:
-    *   *Vertex AI API* (for name and drug embedding similarity)
-    *   *Cloud Run API* (for application hosting)
-    *   *AlloyDB API* / *Spanner API* / *Cloud SQL Admin API* (depending on your database configuration)
-*   Google Cloud Application Default Credentials (ADC) active on your system:
+*   A **Google Cloud Project** with active billing.
+*   Google Cloud SDK installed and authenticated on your local machine:
     ```bash
     gcloud auth application-default login
     ```
 
-### 1. Configuration Setup
-Create your local configuration file from the template and fill in your GCP project and database credentials:
+---
+
+### 🗺️ Option A: Automated Infrastructure Deployment (With Terraform)
+
+You can provision all required databases, Artifact Registry, and project APIs automatically using the provided Terraform script.
+
+#### 1. Initialize and Run Terraform
+Navigate to the `terraform/` directory, initialize the providers, and execute deployment:
 ```bash
+cd terraform
+terraform init
+terraform apply -var="project_id=YOUR_GCP_PROJECT_ID"
+```
+*This automatically provisions: Enabled GCP APIs, Spanner Instance & Database, Cloud SQL PostgreSQL 18 Instance & Database, AlloyDB Cluster & Primary Instance, and Artifact Registry repository.*
+
+#### 2. Copy and Configure Settings
+Create your configuration file from the template and fill in your project ID:
+```bash
+cd ..
 cp config.example.json config.json
 ```
 
-### 2. Database Setup & Seeding
-To initialize the schema and populate the demo databases with preset patient scenarios:
+#### 3. Seed Databases with Presets
+Once the databases are created, run the python seeding scripts to create schemas and insert the Dorothy Thompson preset:
+```bash
+python3 skills/db/cloudsql_setup/setup_cloudsql.py
+python3 skills/db/alloydb_setup/setup_alloydb.py
+python3 skills/db/spanner_setup/setup_spanner.py
+```
 
-*   **Cloud SQL Setup**:
-    ```bash
-    python3 skills/db/cloudsql_setup/setup_cloudsql.py
-    ```
-*   **AlloyDB Setup**:
-    ```bash
-    python3 skills/db/alloydb_setup/setup_alloydb.py
-    ```
-*   **Spanner Setup**:
-    ```bash
-    python3 skills/db/spanner_setup/setup_spanner.py
-    ```
+---
 
-### 3. Run Local Frontend Development Server
+### 🗺️ Option B: Manual Infrastructure Deployment (Without Terraform)
+
+If you prefer to use existing instances or configure resources manually, follow these steps:
+
+#### 1. Enable Required APIs
+Enable the following APIs in your Google Cloud Console:
+```bash
+gcloud services enable \
+  aiplatform.googleapis.com \
+  artifactregistry.googleapis.com \
+  cloudbuild.googleapis.com \
+  run.googleapis.com \
+  sqladmin.googleapis.com \
+  spanner.googleapis.com \
+  alloydb.googleapis.com
+```
+
+#### 2. Create Database Resources
+Ensure your GCP project has the following instances set up with their default names:
+*   **Cloud SQL (PostgreSQL 15 or 18)**: Instance ID `cloudsql-demo`, Database `cloudsql-demo-db`, User `demo-user`.
+*   **AlloyDB**: Cluster ID `alloydb-demo-cluster`, Instance ID `alloydb-inst`, Database `alloydb-demo-db`, User `demo-user`.
+*   **Cloud Spanner**: Instance ID `spanner-demo-inst`, Database `spanner-demo-db`.
+*   **Artifact Registry**: Docker Repository named `cloudscript-repo` in region `us-west4`.
+
+#### 3. Copy and Configure Settings
+```bash
+cp config.example.json config.json
+```
+*(Open `config.json` and configure details for your manual instances).*
+
+#### 4. Seed Databases with Presets
+```bash
+python3 skills/db/cloudsql_setup/setup_cloudsql.py
+python3 skills/db/alloydb_setup/setup_alloydb.py
+python3 skills/db/spanner_setup/setup_spanner.py
+```
+
+---
+
+### 🖥️ Running the Application
+
+#### 1. Run Local Frontend Development Server
 Navigate to the frontend folder, install packages, and launch:
 ```bash
 cd cloudscript/frontend
@@ -132,7 +180,7 @@ npm install
 npm run dev
 ```
 
-### 4. Deploy Application to Cloud Run
+#### 2. Deploy Application Container to Cloud Run
 To package and deploy the containerized application to Google Cloud Run:
 ```bash
 cd cloudscript
