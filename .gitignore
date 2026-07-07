@@ -13,3 +13,5 @@ node_modules/
 dist/
 .env
 dbce/
+agents/README.md
+agents/
