@@ -1,25 +1,19 @@
-import { useState, useEffect, useRef } from 'react'
+import { useState, useEffect, useRef, useCallback } from 'react'
 import { 
   Workflow, 
   Database, 
   UserCheck, 
   PackageCheck, 
-  Settings, 
   ChevronRight, 
   CheckCircle, 
   AlertTriangle, 
   Sparkles, 
   Send, 
-  User, 
-  TrendingUp, 
-  Search, 
-  Download, 
   Cpu, 
   Eye, 
   ArrowRight,
   RefreshCw,
-  Check,
-  FolderOpen
+  Check
 } from 'lucide-react'
 
 function App() {
@@ -45,25 +39,8 @@ function App() {
   const [isChatLoading, setIsChatLoading] = useState(false)
   const chatEndRef = useRef(null)
 
-  // Load presets
-  useEffect(() => {
-    fetch('/api/presets')
-      .then(res => res.json())
-      .then(data => {
-        setPresets(data)
-        if (data.length > 0) {
-          loadPreset(selectedPresetId)
-        }
-      })
-      .catch(err => console.error("Error loading presets:", err))
-  }, [])
-
-  // Auto-scroll chat
-  useEffect(() => {
-    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
-  }, [chatMessages])
-
-  const loadPreset = (presetId) => {
+  // Define loadPreset
+  const loadPreset = useCallback((presetId) => {
     fetch(`/api/preset/${presetId}`)
       .then(res => res.json())
       .then(data => {
@@ -82,7 +59,25 @@ function App() {
         ])
       })
       .catch(err => console.error("Error loading preset:", err))
-  }
+  }, [])
+
+  // Load presets
+  useEffect(() => {
+    fetch('/api/presets')
+      .then(res => res.json())
+      .then(data => {
+        setPresets(data)
+        if (data.length > 0) {
+          loadPreset(selectedPresetId)
+        }
+      })
+      .catch(err => console.error("Error loading presets:", err))
+  }, [selectedPresetId, loadPreset])
+
+  // Auto-scroll chat
+  useEffect(() => {
+    chatEndRef.current?.scrollIntoView({ behavior: 'smooth' })
+  }, [chatMessages])
 
   const handleExtract = async () => {
     setIsExtracting(true)
