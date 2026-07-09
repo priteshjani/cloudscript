@@ -167,7 +167,7 @@ function App() {
           setActiveTab('architecture')
         }
       })
-      .catch(err => {
+      .catch(() => {
         alert("Network error: Could not complete dispense.")
       })
   }
