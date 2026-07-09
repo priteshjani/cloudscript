@@ -43,24 +43,16 @@ class DatabaseClient:
         instance_connection_name = db_config.get("instance_connection_name", "my-host-prj-472917:us-west4:cloudsql-demo")
 
         try:
-            if is_cloud_run:
-                unix_sock = f"/cloudsql/{instance_connection_name}/.s.PGSQL.5432"
-                logger.info(f"Running on Cloud Run. Connecting to database via Unix socket: {unix_sock}")
-                conn = pg8000.dbapi.connect(
-                    unix_sock=unix_sock,
-                    database=database,
-                    user=user,
-                    password=password
-                )
-            else:
-                logger.info(f"Running locally. Connecting to database via TCP: {host}:{port}")
-                conn = pg8000.dbapi.connect(
-                    host=host,
-                    port=port,
-                    database=database,
-                    user=user,
-                    password=password
-                )
+            from google.cloud.sql.connector import Connector
+            connector = Connector()
+            logger.info(f"Connecting to Cloud SQL via Python Connector: {instance_connection_name}")
+            conn = connector.connect(
+                instance_connection_name,
+                "pg8000",
+                user=user,
+                password=password,
+                db=database
+            )
             cursor = conn.cursor()
             
             # Since we don't have active Vertex AI API calls, we generate a mock query vector 
@@ -126,6 +118,7 @@ class DatabaseClient:
                 })
             
             conn.close()
+            connector.close()
             return candidates
         except Exception as e:
             logger.error(f"Error querying Cloud SQL: {e}", exc_info=True)
@@ -136,7 +129,7 @@ class DatabaseClient:
         """Queries AlloyDB database using pgvector and pg_trgm similarity."""
         db_config = CONFIG.get("databases", {}).get("alloydb", {})
         project_id = CONFIG.get("gcp", {}).get("project_id", "my-host-prj-472917")
-        region = CONFIG.get("gcp", {}).get("region", "us-west4")
+        region = db_config.get("region", CONFIG.get("gcp", {}).get("region", "us-west4"))
         cluster_id = db_config.get("cluster_id", "alloydb-demo-cluster")
         instance_id = db_config.get("instance_id", "alloydb-inst")
         database = db_config.get("database_name", "alloydb-demo-db")
@@ -311,10 +304,10 @@ class DatabaseClient:
     @staticmethod
     def _get_seed_vector_for_name(name: str) -> List[float]:
         """Returns a deterministic 768-dimension vector based on name for presets matching."""
-        # Use simple hash seed for name to generate deterministic pseudo-random floats
-        # so name searches generate matching vector alignments
-        h = hash(name.lower())
-        random.seed(abs(h))
+        # Use hashlib for a stable hash seed that does not change across Python processes
+        import hashlib
+        h = int(hashlib.sha256(name.lower().encode('utf-8')).hexdigest()[:8], 16)
+        random.seed(h)
         vec = [random.uniform(-1.0, 1.0) for _ in range(768)]
         norm = sum(x*x for x in vec) ** 0.5
         return [x / norm for x in vec]
@@ -330,6 +323,12 @@ class DatabaseClient:
         fields = preset["extracted_fields"]
         
         patient_name = fields["patient_name"]
+        # Map prescription nicknames to seeded database patient names
+        name_mapping = {
+            "Bob Smith": "Robert Smith",
+            "Liz Jones": "Elizabeth Jones",
+        }
+        patient_name = name_mapping.get(patient_name, patient_name)
         npi = fields["npi"]
         drug_name = fields["drug_name"]
         strength = fields["strength"]
@@ -374,12 +373,18 @@ class DatabaseClient:
         instance_connection_name = db_config.get("instance_connection_name", "my-host-prj-472917:us-west4:cloudsql-demo")
         
         conn = None
+        connector = None
         try:
-            if is_cloud_run:
-                unix_sock = f"/cloudsql/{instance_connection_name}/.s.PGSQL.5432"
-                conn = pg8000.dbapi.connect(unix_sock=unix_sock, database=database, user=user, password=password)
-            else:
-                conn = pg8000.dbapi.connect(host=db_config.get("host", "127.0.0.1"), port=int(db_config.get("port", 5432)), database=database, user=user, password=password)
+            from google.cloud.sql.connector import Connector
+            connector = Connector()
+            logger.info(f"Connecting to Cloud SQL via Python Connector: {instance_connection_name}")
+            conn = connector.connect(
+                instance_connection_name,
+                "pg8000",
+                user=user,
+                password=password,
+                db=database
+            )
                 
             cursor = conn.cursor()
             
@@ -409,12 +414,14 @@ class DatabaseClient:
         finally:
             if conn:
                 conn.close()
+            if connector:
+                connector.close()
 
     @staticmethod
     def _dispense_alloydb(patient_name: str, npi: str, drug_name: str, strength: str, qty: int, days_supply: int, refills: int) -> str:
         db_config = CONFIG.get("databases", {}).get("alloydb", {})
         project_id = CONFIG.get("gcp", {}).get("project_id", "my-host-prj-472917")
-        region = CONFIG.get("gcp", {}).get("region", "us-west4")
+        region = db_config.get("region", CONFIG.get("gcp", {}).get("region", "us-west4"))
         cluster_id = db_config.get("cluster_id", "alloydb-demo-cluster")
         instance_id = db_config.get("instance_id", "alloydb-inst")
         database = db_config.get("database_name", "alloydb-demo-db")

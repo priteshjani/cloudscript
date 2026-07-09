@@ -17,7 +17,7 @@ class AlloyDBDeployer:
         self.config = self._load_config(config_path)
         db_config = self.config.get("databases", {}).get("alloydb", {})
         self.project_id = self.config.get("gcp", {}).get("project_id")
-        self.region = self.config.get("gcp", {}).get("region")
+        self.region = db_config.get("region", self.config.get("gcp", {}).get("region"))
         
         self.cluster_id = db_config.get("cluster_id")
         self.instance_id = db_config.get("instance_id")
@@ -124,7 +124,14 @@ class AlloyDBDeployer:
         conn.commit()
         logger.info("AlloyDB DDL Schema successfully deployed.")
 
-    def generate_vector(self) -> List[float]:
+    def generate_vector(self, name: str = None) -> List[float]:
+        if name:
+            import hashlib
+            h = int(hashlib.sha256(name.lower().encode('utf-8')).hexdigest()[:8], 16)
+            random.seed(h)
+        else:
+            import time
+            random.seed(time.time_ns())
         vec = [random.uniform(-1.0, 1.0) for _ in range(768)]
         norm = sum(x*x for x in vec) ** 0.5
         return [x / norm for x in vec]
@@ -143,7 +150,7 @@ class AlloyDBDeployer:
         ]
         
         for name, dob, ins, zip_code, gender in presets:
-            embedding = self.generate_vector()
+            embedding = self.generate_vector(name)
             emb_str = "[" + ",".join(map(str, embedding)) + "]"
             cursor.execute("""
                 INSERT INTO patients (name, dob, insurance_id, zip_code, gender, name_embedding)
@@ -188,7 +195,7 @@ class AlloyDBDeployer:
             ins = f"INS-{random.randint(100000, 999999)}"
             zip_code = f"{random.randint(10000, 99999):05d}"
             gender = random.choice(genders)
-            embedding = self.generate_vector()
+            embedding = self.generate_vector(name)
             emb_str = "[" + ",".join(map(str, embedding)) + "]"
             
             cursor.execute("""

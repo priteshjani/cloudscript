@@ -9,8 +9,10 @@
     "alloydb": {
       "cluster_id": "alloydb-demo-cluster",
       "instance_id": "alloydb-inst",
+      "region": "us-west4",
       "database_name": "alloydb-demo-db",
-      "user": "demo-user"
+      "user": "demo-user",
+      "password": "Password123!"
     },
     "spanner": {
       "instance_id": "spanner-demo-inst",

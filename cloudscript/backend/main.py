@@ -93,8 +93,7 @@ def match_patients(request: IngestRequest, x_database_type: str = Header(default
     elif db_type == "spanner":
         candidates = DatabaseClient.query_spanner(name_query, dob_query, ins_query)
     elif db_type == "alloydb":
-        # AlloyDB uses same pg8000 connector query format for the demo
-        candidates = DatabaseClient.query_cloudsql(name_query, dob_query, ins_query)
+        candidates = DatabaseClient.query_alloydb(name_query, dob_query, ins_query)
     else:
         candidates = preset["candidates"]
         

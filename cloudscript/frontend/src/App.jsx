@@ -158,10 +158,17 @@ function App() {
       },
       body: JSON.stringify({ preset_id: selectedPresetId })
     })
-      .then(res => res.json())
-      .then(data => {
-        alert(data.message)
-        setActiveTab('architecture')
+      .then(async res => {
+        const data = await res.json()
+        if (!res.ok) {
+          alert(data.detail || data.message || "Dispense failed.")
+        } else {
+          alert(data.message || "Prescription successfully dispensed!")
+          setActiveTab('architecture')
+        }
+      })
+      .catch(err => {
+        alert("Network error: Could not complete dispense.")
       })
   }
 

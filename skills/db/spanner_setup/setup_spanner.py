@@ -105,7 +105,14 @@ class SpannerDeployer:
             logger.error(f"Error executing DDL on Spanner: {e}")
             raise e
 
-    def generate_vector(self) -> List[float]:
+    def generate_vector(self, name: str = None) -> List[float]:
+        if name:
+            import hashlib
+            h = int(hashlib.sha256(name.lower().encode('utf-8')).hexdigest()[:8], 16)
+            random.seed(h)
+        else:
+            import time
+            random.seed(time.time_ns())
         vec = [random.uniform(-1.0, 1.0) for _ in range(768)]
         norm = sum(x*x for x in vec) ** 0.5
         return [x / norm for x in vec]
@@ -128,7 +135,7 @@ class SpannerDeployer:
         logger.info("Seeding patient presets to Spanner...")
         patient_data = []
         for pid, name, dob_str, ins, zip_code, gender in presets:
-            embedding = self.generate_vector()
+            embedding = self.generate_vector(name)
             patient_data.append((pid, name, dob_str, ins, zip_code, gender, embedding))
 
         # 2. Seed prescribers
@@ -159,7 +166,7 @@ class SpannerDeployer:
             ins = f"INS-{random.randint(100000, 999999)}"
             zip_code = f"{random.randint(10000, 99999):05d}"
             gender = random.choice(genders)
-            embedding = self.generate_vector()
+            embedding = self.generate_vector(name)
             
             patient_data.append((pid, name, dob_str, ins, zip_code, gender, embedding))
 

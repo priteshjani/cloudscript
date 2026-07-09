@@ -3,6 +3,7 @@ import random
 import logging
 from typing import Dict, Any, List
 import pg8000
+from google.cloud.sql.connector import Connector
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
@@ -40,14 +41,15 @@ class CloudSQLDeployer:
             return {}
 
     def get_connection(self):
-        """Establishes connection to Cloud SQL PostgreSQL via standard pg8000 client."""
-        logger.info(f"Connecting to database {self.database_name} on {self.host}:{self.port} as user '{self.user}'...")
-        conn = pg8000.dbapi.connect(
-            host=self.host,
-            port=self.port,
-            database=self.database_name,
+        """Establishes connection to Cloud SQL PostgreSQL using google-cloud-sql-connector."""
+        logger.info(f"Connecting to database {self.database_name} via Cloud SQL Connector: {self.instance_connection_name} as user '{self.user}'...")
+        connector = Connector()
+        conn = connector.connect(
+            self.instance_connection_name,
+            "pg8000",
             user=self.user,
-            password=self.password
+            password=self.password,
+            db=self.database_name
         )
         return conn
 
@@ -128,8 +130,15 @@ class CloudSQLDeployer:
         conn.commit()
         logger.info("DDL Schema successfully deployed.")
 
-    def generate_vector(self) -> List[float]:
-        """Generates a random mock 768-dimension vector normalized for cosine similarity."""
+    def generate_vector(self, name: str = None) -> List[float]:
+        """Generates a mock 768-dimension vector normalized for cosine similarity."""
+        if name:
+            import hashlib
+            h = int(hashlib.sha256(name.lower().encode('utf-8')).hexdigest()[:8], 16)
+            random.seed(h)
+        else:
+            import time
+            random.seed(time.time_ns())
         vec = [random.uniform(-1.0, 1.0) for _ in range(768)]
         norm = sum(x*x for x in vec) ** 0.5
         return [x / norm for x in vec]
@@ -149,7 +158,7 @@ class CloudSQLDeployer:
         ]
         
         for name, dob, ins, zip_code, gender in presets:
-            embedding = self.generate_vector()
+            embedding = self.generate_vector(name)
             emb_str = "[" + ",".join(map(str, embedding)) + "]"
             cursor.execute("""
                 INSERT INTO patients (name, dob, insurance_id, zip_code, gender, name_embedding)
@@ -195,7 +204,7 @@ class CloudSQLDeployer:
             ins = f"INS-{random.randint(100000, 999999)}"
             zip_code = f"{random.randint(10000, 99999):05d}"
             gender = random.choice(genders)
-            embedding = self.generate_vector()
+            embedding = self.generate_vector(name)
             emb_str = "[" + ",".join(map(str, embedding)) + "]"
             
             cursor.execute("""
